@@ -2,6 +2,17 @@ import os
 import sys
 from astropy.io import fits
 
+SurveyMinDec = -90
+SurveyMaxDec = -70
+SurveyMinRA = 0
+SurveyMaxRA = 90
+
+dec_step = 5
+ra_step = 5
+
+tapurl = 'https://gea.esac.esa.int/tap-server/tap'
+selectColumns = 'source_id, ra, dec, parallax, parallax_over_error, pmra, pmdec, astrometric_excess_noise, ruwe'
+
 def countSources(myInputFitsFile):
  myNumberOfSources = 0
  if os.path.exists(myInputFitsFile):
@@ -15,15 +26,10 @@ if os.path.exists('pasta.fits'):
  os.system('rm pasta.fits')
  print('old pasta.fits removed')
 
-SurveyMinDec = -90
-SurveyMaxDec = -70
-SurveyMinRA = 0
-SurveyMaxRA = 90
-
-dec_step = 5
-ra_step = 5
-
 myLog = open('myLog.txt','w')
+myString = '#dec\tRA\tGaia\tgalex\tallwise\tpasta'
+print(myString)
+myLog.write(myString + '\n')
 
 for declination in range(SurveyMinDec,SurveyMaxDec,dec_step):
  for rightAscension in range(SurveyMinRA,SurveyMaxRA,ra_step):
@@ -33,8 +39,6 @@ for declination in range(SurveyMinDec,SurveyMaxDec,dec_step):
   minRA = rightAscension
   maxRA = rightAscension + ra_step
   
-  tapurl = 'https://gea.esac.esa.int/tap-server/tap'
-  selectColumns = 'source_id, ra, dec, parallax, parallax_over_error, pmra, pmdec, astrometric_excess_noise, ruwe'
   adqlQuery = 'select ' + str(selectColumns) + ' from gaiaedr3.gaia_source where parallax_over_error > 5 and ruwe < 1.4 and ra between ' + str(minRA) + ' and ' + str(maxRA) + ' and dec between ' + str(minDec) + ' and ' + str(maxDec)
   
   stiltsCommand = 'stilts tapquery tapurl=' + tapurl + ' adql="' + adqlQuery + '" out=tmp.fits'
@@ -69,8 +73,8 @@ for declination in range(SurveyMinDec,SurveyMaxDec,dec_step):
    os.system('mv tmp.fits pasta.fits')
 
   NumberPasta = countSources('pasta.fits')
-  myString = str(declination) + ' ' + str(rightAscension) + ' ' + str(NumberGaia) + ' ' + \
-   str(NumberGalex) + ' ' + str(NumberAllWise) + ' ' + str(NumberPasta)
+  myString = str(declination) + '\t' + str(rightAscension) + '\t' + str(NumberGaia) + '\t' + \
+   str(NumberGalex) + '\t' + str(NumberAllWise) + '\t' + str(NumberPasta)
   print(myString)
   myLog.write(myString + '\n')
 
