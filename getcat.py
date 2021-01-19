@@ -3,15 +3,15 @@ import sys
 from astropy.io import fits
 
 SurveyMinDec = -90
-SurveyMaxDec = -70
+SurveyMaxDec = 90
 SurveyMinRA = 0
-SurveyMaxRA = 90
+SurveyMaxRA = 360
 
 dec_step = 5
 ra_step = 5
 
 tapurl = 'https://gea.esac.esa.int/tap-server/tap'
-selectColumns = 'source_id, ra, dec, parallax, parallax_over_error, pmra, pmdec, astrometric_excess_noise, ruwe'
+selectColumns = 'source_id, ra, dec, parallax_over_error, ruwe'
 
 def countSources(myInputFitsFile):
  myNumberOfSources = 0
